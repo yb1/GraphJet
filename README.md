@@ -9,7 +9,7 @@ including personalized recommendation algorithms based on
 collaborative filtering. These algorithms power a variety of real-time
 recommendation services within Twitter, notably content (tweets/URLs)
 recommendations that require collaborative filtering over a
-heterogenous, rapidly evolving graph.
+heterogeneous, rapidly evolving graph.
 
 GraphJet is able to support rapid ingestion of edges in an evolving
 graph while concurrently serving lookup queries through a combination
@@ -69,13 +69,13 @@ curl http://localhost:8888/userTweetGraph/topTweets?k=5
 curl http://localhost:8888/userTweetGraph/topUsers?k=5
 ```
 
-+ `userTweetGraphEdges/tweets`: queries for the edges incident to a particular tweet in the user-tweet graph, i.e., users who have interacted with the tweet. Use parameter `id` to specify tweetid (e.g., from `userTweetGraph/topTweets` above). Sample invocation:
++ `userTweetGraphEdges/tweets`: queries for the edges incident to a particular tweet in the user-tweet graph, i.e., users who have interacted with the tweet. Use parameter `id` to specify tweetId (e.g., from `userTweetGraph/topTweets` above). Sample invocation:
 
 ```
 curl http://localhost:8888/userTweetGraphEdges/tweets?id=xxx
 ```
 
-+ `userTweetGraphEdges/users`: queries for the edges incident to a particular user in the user-tweet graph, i.e., tweets the user interacted with. Use parameter `id` to specify userid (e.g., from `userTweetGraph/topUsers` above). Sample invocation:
++ `userTweetGraphEdges/users`: queries for the edges incident to a particular user in the user-tweet graph, i.e., tweets the user interacted with. Use parameter `id` to specify userId (e.g., from `userTweetGraph/topUsers` above). Sample invocation:
 
 ```
 curl http://localhost:8888/userTweetGraphEdges/users?id=xxx
@@ -95,13 +95,13 @@ curl http://localhost:8888/tweetHashtagGraph/topTweets?k=5
 curl http://localhost:8888/tweetHashtagGraph/topHashtags?k=5
 ```
 
-+ `tweetHashtagGraphEdges/tweets`: queries for the edges incident to a particular tweet in the tweet-hashtag graph, i.e., hashtags contained in the tweet. Use parameter `id` to specify tweetid (e.g., from `tweetHashtagGraph/topTweets` above). Sample invocation:
++ `tweetHashtagGraphEdges/tweets`: queries for the edges incident to a particular tweet in the tweet-hashtag graph, i.e., hashtags contained in the tweet. Use parameter `id` to specify tweetId (e.g., from `tweetHashtagGraph/topTweets` above). Sample invocation:
 
 ```
 curl http://localhost:8888/tweetHashtagGraphEdges/tweets?id=xxx
 ```
 
-+ `tweetHashtagGraphEdges/hashtags`: queries for the edges incident to a particular hashtag hashtag in the tweet-hashtag graph, i.e., tweets the given hashtag is contained in. Use parameter `id` to specify hashtag id (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
++ `tweetHashtagGraphEdges/hashtags`: queries for the edges incident to a particular hashtag in the tweet-hashtag graph, i.e., tweets the given hashtag is contained in. Use parameter `id` to specify hashtagId (e.g., from `tweetHashtagGraph/topHashtags` above). Sample invocation:
 
 ```
 curl http://localhost:8888/tweetHashtagGraphEdges/hashtags?id=xxx
