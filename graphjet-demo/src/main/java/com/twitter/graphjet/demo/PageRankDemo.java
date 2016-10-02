@@ -86,26 +86,27 @@ public class PageRankDemo {
       if (Files.isRegularFile(filePath)) {
         try (Stream<String> stream = Files.lines(filePath)) {
           stream.forEach(x -> {
-            String[] tokens = x.split(" ");
+            String[] tokens = x.split("\\s+");
             int cur;
             if (tokens.length > 1) {
-              if (counter.get() != 0)
-                throw new IllegalArgumentException("Input format not correct");
-              // new vertex
-              cur = Integer.parseInt(tokens[0]);
-              from.set(cur);
-              counter.set(Integer.parseInt(tokens[1]));
+                // new vertex
+                cur = Integer.parseInt(tokens[0]);
+                from.set(cur);
+                to.set(Integer.parseInt(tokens[1]));
+                bigraph.addEdge(from.get(), to.get(), (byte) 1);
+                edgeCounter.incrementAndGet();
+                if (insertVertice(vertices, cur)) {
+                    if (max.get() < cur) {
+                        max.set(cur);
+                    }
+                }
+                if (insertVertice(vertices, to.get())) {
+                    if (max.get() < to.get()) {
+                        max.set(to.get());
+                    }
+                }
             } else {
-              cur = Integer.parseInt(tokens[0]);
-              to.set(cur);
-              bigraph.addEdge(from.get(), to.get(), (byte) 1);
-              counter.decrementAndGet();
-              edgeCounter.incrementAndGet();
-            }
-            if (insertVertice(vertices, cur)) {
-              if (max.get() < cur) {
-                max.set(cur);
-              }
+                System.out.println("token length " + tokens.length + " & " + tokens[0]);
             }
           });
         } catch (IOException e) {
