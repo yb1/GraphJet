@@ -115,25 +115,29 @@ public class PageRankDemo {
       }
     });
 
-    long loadedTime = System.currentTimeMillis();
-    System.out.println("# of vertices " + vertices.size());
+    long numRuns = 10;
+    long total = 0.0L;
+    for (int i = 0; i < 10; ++i) {
+      long loadedTime = System.currentTimeMillis();
+      System.out.println("Running page rank.. # of vertices: " + vertices.size());
 
-    PageRank pr = new PageRank(bigraph, vertices, max.get(), 0.85, 1e-15);
-    double pagerank[] = pr.run(22);
-    long endTime = System.currentTimeMillis();
+      PageRank pr = new PageRank(bigraph, vertices, max.get(), 0.85, 1e-15);
+      double pagerank[] = pr.run(22);
+      long endTime = System.currentTimeMillis();
 
-    AtomicInteger constructedGraphEdgeCounter = new AtomicInteger();
-    vertices.forEach(v -> {
-      constructedGraphEdgeCounter.addAndGet(bigraph.getOutDegree(v));
-      System.out.println(v + " " + pagerank[(int)(long) v]);
-    });
-    if (edgeCounter.get() == constructedGraphEdgeCounter.get()) {
-      System.out.println("Edge count " + edgeCounter.get());
-    } else {
-      System.err.println("Some of edges are dropped. Expected: " + edgeCounter.get() + " actual: " + constructedGraphEdgeCounter.get());
+      AtomicInteger constructedGraphEdgeCounter = new AtomicInteger();
+      vertices.forEach(v -> {
+        constructedGraphEdgeCounter.addAndGet(bigraph.getOutDegree(v));
+        //System.out.println(v + " " + pagerank[(int)(long) v]);
+      });
+      if (edgeCounter.get() == constructedGraphEdgeCounter.get()) {
+        System.out.println("Edge count " + edgeCounter.get());
+      } else {
+        System.err.println("Some of edges are dropped. Expected: " + edgeCounter.get() + " actual: " + constructedGraphEdgeCounter.get());
+      }
+      total += (endTime-loadedTime);
+      System.out.println("PageRank took: " + (endTime-loadedTime) + " milliseconds ");
     }
-    System.out.println("Loading took: " + (loadedTime-start)+ " milliseconds ");
-    System.out.println("PageRank took: " + (endTime-loadedTime)+ " milliseconds ");
-    System.out.println("Total time elapsed: " + (endTime-start)+ " milliseconds ");
+    System.out.println("Average : " + (total / numRuns) + " milliseconds ");
   }
 }
