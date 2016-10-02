@@ -64,12 +64,6 @@ public class PageRankDemo {
   }
 
   public static void main(String[] argv) throws Exception {
-    if (argv.length < 1) {
-      System.out.println("Not enough argument: 1st argument = path to graph data");
-      return;
-    }
-    String graphPath = argv[0];
-
     final TwitterStreamReaderArgs args = new TwitterStreamReaderArgs();
     CmdLineParser parser = new CmdLineParser(args, ParserProperties.defaults().withUsageWidth(90));
 
