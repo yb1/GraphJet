@@ -109,6 +109,7 @@ public class PageRankDemo {
           while((line = br.readLine()) != null) {
             if (line.startsWith("#") || line.startsWith("twitter_rv.net")) continue;
             String[] tokens = line.split("\\s+");
+//System.out.println(tokens[0] + " : " + tokens[1]);
             int cur;
             if (tokens.length > 1) {
               // new vertex
@@ -123,25 +124,10 @@ public class PageRankDemo {
                 }
               }
               if (insertVertice(vertices, to.get())) {
-                // new vertex
-                cur = Integer.parseInt(tokens[0]);
-                from.set(cur);
-                to.set(Integer.parseInt(tokens[1]));
-                bigraph.addEdge(from.get(), to.get(), (byte) 1);
-                edgeCounter.incrementAndGet();
-                if (insertVertice(vertices, cur)) {
-                  if (max.get() < cur) {
-                    max.set(cur);
-                  }
+                if (max.get() < to.get()) {
+                  max.set(to.get());
                 }
-                if (insertVertice(vertices, to.get())) {
-                  if (max.get() < to.get()) {
-                     max.set(to.get());
-                  }
-                }
-              } else {
-                System.out.println("token length " + tokens.length + " & " + tokens[0]);
-              }
+              } 
             }
           }
         } catch (Exception e) {
