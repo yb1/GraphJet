@@ -116,8 +116,8 @@ public class PageRankDemo {
     });
 
     long numRuns = 10;
-    long total = 0.0L;
-    for (int i = 0; i < 10; ++i) {
+    long total = 0L;
+    for (int i = 0; i < numRuns; ++i) {
       long loadedTime = System.currentTimeMillis();
       System.out.println("Running page rank.. # of vertices: " + vertices.size());
 
