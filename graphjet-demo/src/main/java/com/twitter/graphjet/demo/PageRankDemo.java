@@ -95,33 +95,29 @@ public class PageRankDemo {
       final AtomicInteger counter = new AtomicInteger();
 
       if (Files.isRegularFile(filePath)) {
-        try (Stream<String> stream = Files.lines(filePath)) {
-          stream.forEach(x -> {
-            String[] tokens = x.split("\\s+");
-            int cur;
-            if (tokens.length > 1) {
-                // new vertex
-                cur = Integer.parseInt(tokens[0]);
-                from.set(cur);
-                to.set(Integer.parseInt(tokens[1]));
-                bigraph.addEdge(from.get(), to.get(), (byte) 1);
-                edgeCounter.incrementAndGet();
-                if (insertVertice(vertices, cur)) {
-                    if (max.get() < cur) {
-                        max.set(cur);
-                    }
+        GZIPInputStream gzip = new GZIPInputStream(new FileInputStream(filePath));
+        BufferedReader br = new BufferedReader(new InputStreamReader(gzip));
+        String[] tokens = br.readLine().split("\\s+");
+        int cur;
+        if (tokens.length > 1) {
+            // new vertex
+            cur = Integer.parseInt(tokens[0]);
+            from.set(cur);
+            to.set(Integer.parseInt(tokens[1]));
+            bigraph.addEdge(from.get(), to.get(), (byte) 1);
+            edgeCounter.incrementAndGet();
+            if (insertVertice(vertices, cur)) {
+                if (max.get() < cur) {
+                    max.set(cur);
                 }
-                if (insertVertice(vertices, to.get())) {
-                    if (max.get() < to.get()) {
-                        max.set(to.get());
-                    }
-                }
-            } else {
-                System.out.println("token length " + tokens.length + " & " + tokens[0]);
             }
-          });
-        } catch (IOException e) {
-          e.printStackTrace();
+            if (insertVertice(vertices, to.get())) {
+                if (max.get() < to.get()) {
+                    max.set(to.get());
+                }
+            }
+        } else {
+            System.out.println("token length " + tokens.length + " & " + tokens[0]);
         }
       }
     });
