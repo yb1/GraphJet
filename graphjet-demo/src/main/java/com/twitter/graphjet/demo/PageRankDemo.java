@@ -1,5 +1,11 @@
 package com.twitter.graphjet.demo;
 
+import java.io.InputStream;
+import java.io.File;
+import java.util.zip.GZIPInputStream;
+import java.io.FileInputStream; 
+import java.io.BufferedReader; 
+import java.io.InputStreamReader;
 import com.twitter.graphjet.algorithms.PageRank;
 import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
 import com.twitter.graphjet.directed.OutIndexedPowerLawMultiSegmentDirectedGraph;
@@ -95,29 +101,52 @@ public class PageRankDemo {
       final AtomicInteger counter = new AtomicInteger();
 
       if (Files.isRegularFile(filePath)) {
-        GZIPInputStream gzip = new GZIPInputStream(new FileInputStream(filePath));
-        BufferedReader br = new BufferedReader(new InputStreamReader(gzip));
-        String[] tokens = br.readLine().split("\\s+");
-        int cur;
-        if (tokens.length > 1) {
-            // new vertex
-            cur = Integer.parseInt(tokens[0]);
-            from.set(cur);
-            to.set(Integer.parseInt(tokens[1]));
-            bigraph.addEdge(from.get(), to.get(), (byte) 1);
-            edgeCounter.incrementAndGet();
-            if (insertVertice(vertices, cur)) {
+        try {
+          InputStream inputStream = Files.newInputStream(filePath);
+          GZIPInputStream gzip = new GZIPInputStream(inputStream);
+          BufferedReader br = new BufferedReader(new InputStreamReader(gzip));
+          String line;
+          while((line = br.readLine()) != null) {
+            if (line.startsWith("#") || line.startsWith("twitter_rv.net")) continue;
+            String[] tokens = line.split("\\s+");
+//System.out.println(tokens[0] + " : " + tokens[1]);
+            int cur;
+            if (tokens.length > 1) {
+              // new vertex
+              cur = Integer.parseInt(tokens[0]);
+              from.set(cur);
+              to.set(Integer.parseInt(tokens[1]));
+              bigraph.addEdge(from.get(), to.get(), (byte) 1);
+              edgeCounter.incrementAndGet();
+              if (insertVertice(vertices, cur)) {
                 if (max.get() < cur) {
+                   max.set(cur);
+                }
+              }
+              if (insertVertice(vertices, to.get())) {
+                // new vertex
+                cur = Integer.parseInt(tokens[0]);
+                from.set(cur);
+                to.set(Integer.parseInt(tokens[1]));
+                bigraph.addEdge(from.get(), to.get(), (byte) 1);
+                edgeCounter.incrementAndGet();
+                if (insertVertice(vertices, cur)) {
+                  if (max.get() < cur) {
                     max.set(cur);
+                  }
                 }
-            }
-            if (insertVertice(vertices, to.get())) {
-                if (max.get() < to.get()) {
-                    max.set(to.get());
+                if (insertVertice(vertices, to.get())) {
+                  if (max.get() < to.get()) {
+                     max.set(to.get());
+                  }
                 }
+              } else {
+                System.out.println("token length " + tokens.length + " & " + tokens[0]);
+              }
             }
-        } else {
-            System.out.println("token length " + tokens.length + " & " + tokens[0]);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();	  
         }
       }
     });
