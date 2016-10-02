@@ -5,8 +5,10 @@ import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
 import com.twitter.graphjet.directed.OutIndexedPowerLawMultiSegmentDirectedGraph;
 import com.twitter.graphjet.stats.NullStatsReceiver;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-
+import org.kohsuke.args4j.ParserProperties;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -34,6 +36,9 @@ import java.util.stream.Stream;
  */
 public class PageRankDemo {
   private static class TwitterStreamReaderArgs {
+    @Option(name = "-inputFile", metaVar = "[value]", usage = "maximum number of segments", required = true)
+    String inputFile;
+
     @Option(name = "-maxSegments", metaVar = "[value]", usage = "maximum number of segments")
     int maxSegments = 15;
 
@@ -66,6 +71,18 @@ public class PageRankDemo {
     String graphPath = argv[0];
 
     final TwitterStreamReaderArgs args = new TwitterStreamReaderArgs();
+    CmdLineParser parser = new CmdLineParser(args, ParserProperties.defaults().withUsageWidth(90));
+
+    try {
+      parser.parseArgument(argv);
+    } catch (CmdLineException e) {
+      System.err.println(e.getMessage());
+      parser.printUsage(System.err);
+      return;
+    }
+    
+    String graphPath = args.inputFile;
+
     OutIndexedPowerLawMultiSegmentDirectedGraph bigraph =  new OutIndexedPowerLawMultiSegmentDirectedGraph(args.maxSegments, args.maxEdgesPerSegment,
             args.leftSize, args.leftDegree, args.leftPowerLawExponent,
             new IdentityEdgeTypeMask(),
