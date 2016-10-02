@@ -109,7 +109,6 @@ public class PageRankDemo {
           while((line = br.readLine()) != null) {
             if (line.startsWith("#") || line.startsWith("twitter_rv.net")) continue;
             String[] tokens = line.split("\\s+");
-//System.out.println(tokens[0] + " : " + tokens[1]);
             int cur;
             if (tokens.length > 1) {
               // new vertex
