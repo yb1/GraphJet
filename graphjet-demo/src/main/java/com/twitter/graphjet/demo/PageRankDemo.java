@@ -143,7 +143,7 @@ public class PageRankDemo {
       System.out.println("Running page rank.. # of vertices: " + vertices.size());
 
       PageRank pr = new PageRank(bigraph, vertices, max.get(), 0.85, 1e-15);
-      double pagerank[] = pr.run(22);
+      double pagerank[] = pr.run(10);
       long endTime = System.currentTimeMillis();
 
       AtomicInteger constructedGraphEdgeCounter = new AtomicInteger();
