@@ -1,11 +1,8 @@
 package com.twitter.graphjet.demo;
 
-import java.io.InputStream;
-import java.io.File;
+import java.io.*;
 import java.util.zip.GZIPInputStream;
-import java.io.FileInputStream; 
-import java.io.BufferedReader; 
-import java.io.InputStreamReader;
+
 import com.twitter.graphjet.algorithms.PageRank;
 import com.twitter.graphjet.bipartite.segment.IdentityEdgeTypeMask;
 import com.twitter.graphjet.directed.OutIndexedPowerLawMultiSegmentDirectedGraph;
@@ -15,31 +12,15 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.ParserProperties;
-import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
-/**
- *
- * Reads in a multi-line adjacency list from multiple files in a directory, where ids are of type T.
- * Does not check for duplicate edges or nodes.
- *
- *  In each file, a node and its neighbors is defined by the first line being that
- * node's id and its # of neighbors, followed by that number of ids on subsequent lines.
- * For example, when ids are Ints,
- *    241 3
- *    2
- *    4
- *    1
- *    53 1
- *    241
- *    ...
- * In this file, node 241 has 3 neighbors, namely 2, 4 and 1. Node 53 has 1 neighbor, 241.
- *
- */
+
+
 public class PageRankDemo {
   private static class TwitterStreamReaderArgs {
     @Option(name = "-inputFile", metaVar = "[value]", usage = "maximum number of segments", required = true)
@@ -59,6 +40,9 @@ public class PageRankDemo {
 
     @Option(name = "-leftPowerLawExponent", metaVar = "[value]", usage = "left side Power Law exponent")
     float leftPowerLawExponent = 2.0f;
+
+    @Option(name = "-gzip", metaVar = "[value]", usage = "if input file is gzip")
+    boolean gzip = false;
   }
 
   public static boolean insertVertice(LongOpenHashSet ids, long id) {
@@ -98,21 +82,26 @@ public class PageRankDemo {
     Files.walk(Paths.get(graphPath)).forEach(filePath -> {
       final AtomicInteger from = new AtomicInteger();
       final AtomicInteger to = new AtomicInteger();
-      final AtomicInteger counter = new AtomicInteger();
 
       if (Files.isRegularFile(filePath)) {
         try {
-          InputStream inputStream = Files.newInputStream(filePath);
-          GZIPInputStream gzip = new GZIPInputStream(inputStream);
-          BufferedReader br = new BufferedReader(new InputStreamReader(gzip));
+          BufferedReader br;
+
+          if (args.gzip) {
+            InputStream inputStream = Files.newInputStream(filePath);
+            GZIPInputStream gzip = new GZIPInputStream(inputStream);
+            br = new BufferedReader(new InputStreamReader(gzip));
+          } else {
+            br = new BufferedReader(new FileReader(filePath.getFileName().toString()));
+          }
+
           String line;
           while((line = br.readLine()) != null) {
             if (line.startsWith("#") || line.startsWith("twitter_rv.net")) continue;
             String[] tokens = line.split("\\s+");
-//System.out.println(tokens[0] + " : " + tokens[1]);
+
             int cur;
             if (tokens.length > 1) {
-              // new vertex
               cur = Integer.parseInt(tokens[0]);
               from.set(cur);
               to.set(Integer.parseInt(tokens[1]));
